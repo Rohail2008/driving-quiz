@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driving Quiz</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="quiz-container">
+    <div id="question-container">
+        <h1 id="question">Which car has right of way at the intersection with all arriving at same time?</h1>
+        <div class="options">
+            <button class="option" id="optionA" onclick="checkAnswer('a')">The car on the left.</button>
+            <button class="option" id="optionB" onclick="checkAnswer('b')">The car on the right.</button>
+            <button class="option" id="optionC" onclick="checkAnswer('c')">The car that starts first?</button>
+        </div>
+    </div>
+</div>
+
+<div id="score-container" style="display: none;">
+    <h2>Quiz Completed!</h2>
+    <p>Your score is: <span id="score"></span> out of 41</p>
+    <p>Questions answered:</p>
+    <ul id="answered-questions"></ul>
+    <button onclick="restartQuiz()">Restart Quiz</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
