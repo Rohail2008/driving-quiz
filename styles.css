@@ -196,3 +196,14 @@ body {
         transform: translateY(0);
     }
 }
+
+
+.footer-bottom {
+  background-color: #111;
+  color: #eee;
+  text-align: center;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 14px;
+  border-top: 1px solid #333;
+}
