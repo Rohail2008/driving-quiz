@@ -1,7 +1,9 @@
+
+
 // Define all quiz questions
-    const questions = [
-        {
-            question: "Which car has right of way at the intersection with all arriving at same time?",
+const questions = [
+    {
+        question: "Which car has right of way at the intersection with all arriving at same time?",
             options: {
                 a: "The car on the left.",
                 b: "The car on the right.",
@@ -370,102 +372,97 @@
             answer: "c"
         }
     ];
+// Variables to track the quiz
+let currentQuestionIndex = 0;
+let score = 0;
+let answeredQuestions = [];
+let answerSubmitted = false;
 
-    // Variables to track the quiz
-    let currentQuestionIndex = 0;
-    let score = 0;
-    let answeredQuestions = [];
-    let answerSubmitted = false; // Flag to track if an answer is submitted
+// Get DOM elements
+const questionElement = document.getElementById('question');
+const optionAElement = document.getElementById('optionA');
+const optionBElement = document.getElementById('optionB');
+const optionCElement = document.getElementById('optionC');
+const quizContainer = document.getElementById('quiz-container');
+const scoreContainer = document.getElementById('score-container');
+const scoreDisplay = document.getElementById('score');
+const answeredQuestionsList = document.getElementById('answered-questions');
 
-    // Get DOM elements
-    const questionElement = document.getElementById('question');
-    const optionAElement = document.getElementById('optionA');
-    const optionBElement = document.getElementById('optionB');
-    const optionCElement = document.getElementById('optionC');
-    const quizContainer = document.getElementById('quiz-container');
-    const scoreContainer = document.getElementById('score-container');
-    const scoreDisplay = document.getElementById('score');
-    const answeredQuestionsList = document.getElementById('answered-questions');
+// Load the current question
+function loadQuestion() {
+    const q = questions[currentQuestionIndex];
+    questionElement.textContent = q.question;
+    optionAElement.textContent = q.options.a;
+    optionBElement.textContent = q.options.b;
+    optionCElement.textContent = q.options.c;
 
-    // Initialize quiz
-    function loadQuestion() {
-        const currentQuestion = questions[currentQuestionIndex];
-        questionElement.textContent = currentQuestion.question;
-        optionAElement.textContent = currentQuestion.options.a;
-        optionBElement.textContent = currentQuestion.options.b;
-        optionCElement.textContent = currentQuestion.options.c;
+    optionAElement.disabled = false;
+    optionBElement.disabled = false;
+    optionCElement.disabled = false;
+    answerSubmitted = false;
+}
 
-        // Enable buttons
-        optionAElement.disabled = false;
-        optionBElement.disabled = false;
-        optionCElement.disabled = false;
-        answerSubmitted = false; // Reset the flag for the new question
-    }
+// Handle answer checking
+function checkAnswer(selectedOption) {
+    if (answerSubmitted) return;
+    answerSubmitted = true;
 
-    // Check selected answer
-    function checkAnswer(selectedOption) {
-        if (answerSubmitted) {
-            return; // Prevent multiple submissions for the same question
-        }
-        answerSubmitted = true;
+    const q = questions[currentQuestionIndex];
+    const isCorrect = selectedOption === q.answer;
+    if (isCorrect) score++;
 
-        const currentQuestion = questions[currentQuestionIndex];
-        let isCorrect = (selectedOption === currentQuestion.answer);
+    answeredQuestions.push({
+        question: q.question,
+        selectedAnswer: q.options[selectedOption],
+        correctAnswer: q.options[q.answer],
+        isCorrect: isCorrect
+    });
 
-        if (isCorrect) {
-            score++;
-        }
+    optionAElement.disabled = true;
+    optionBElement.disabled = true;
+    optionCElement.disabled = true;
 
-        answeredQuestions.push({
-            question: currentQuestion.question,
-            correctAnswer: currentQuestion.answer,
-            selectedAnswer: selectedOption,
-            isCorrect: isCorrect
-        });
+    setTimeout(nextQuestion, 500);
+}
 
-        // Disable buttons after selection
-        optionAElement.disabled = true;
-        optionBElement.disabled = true;
-        optionCElement.disabled = true;
-
-        // Move to next question after a short delay
-        setTimeout(nextQuestion, 500);
-    }
-
-    // Move to the next question or end quiz
-    function nextQuestion() {
-        currentQuestionIndex++;
-
-        if (currentQuestionIndex < questions.length) {
-            loadQuestion();
-        } else {
-            endQuiz();
-        }
-    }
-
-    function endQuiz() {
-        quizContainer.style.display = 'none';
-        scoreContainer.style.display = 'block';
-        scoreDisplay.textContent = score;
-
-        answeredQuestionsList.innerHTML = ''; // Clear previous content
-
-        answeredQuestions.forEach((qa, index) => {
-            const listItem = document.createElement('li');
-            let result = qa.isCorrect ? "Correct" : "Wrong";
-            listItem.textContent = `Q${index + 1}: ${qa.question} - Your Answer: ${qa.selectedAnswer}, Correct Answer: ${qa.correctAnswer} (${result})`;
-            answeredQuestionsList.appendChild(listItem);
-        });
-    }
-
-    function restartQuiz() {
-        currentQuestionIndex = 0;
-        score = 0;
-        answeredQuestions = [];
-        scoreContainer.style.display = 'none';
-        quizContainer.style.display = 'block';
+// Load next question or end
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
         loadQuestion();
+    } else {
+        endQuiz();
     }
+}
 
-    // Initial load
+// Show final score and detailed answers
+function endQuiz() {
+    quizContainer.style.display = 'none';
+    scoreContainer.style.display = 'block';
+    scoreDisplay.textContent = score;
+
+    answeredQuestionsList.innerHTML = '';
+    answeredQuestions.forEach((qa, index) => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `
+            <strong>Q${index + 1}:</strong> ${qa.question}<br>
+            Your Answer: <span class="your-answer">${qa.selectedAnswer}</span>,
+            Correct Answer: <span class="correct-answer">${qa.correctAnswer}</span>
+            <span class="${qa.isCorrect ? 'correct' : 'wrong'}">(${qa.isCorrect ? 'Correct' : 'Wrong'})</span>
+        `;
+        answeredQuestionsList.appendChild(listItem);
+    });
+}
+
+// Reset quiz
+function restartQuiz() {
+    currentQuestionIndex = 0;
+    score = 0;
+    answeredQuestions = [];
+    scoreContainer.style.display = 'none';
+    quizContainer.style.display = 'block';
     loadQuestion();
+}
+
+// Start quiz
+loadQuestion();
